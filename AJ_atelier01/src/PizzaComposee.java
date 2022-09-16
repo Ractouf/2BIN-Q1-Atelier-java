@@ -20,6 +20,6 @@ public class PizzaComposee extends Pizza {
     @Override
     public double calculerPrix() {
         double remise = (double)REMISE/100;
-        return super.calculerPrix() - (super.calculerPrix() * remise);
+        return Math.ceil(super.calculerPrix() - (super.calculerPrix() * remise));
     }
 }

@@ -1,6 +1,7 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public abstract class Pizza {
+public abstract class Pizza implements Iterable<Ingredient> {
     public final static double PRIX_BASE = 5.0;
     private String titre, description;
     private ArrayList<Ingredient> ingredients;
@@ -12,6 +13,8 @@ public abstract class Pizza {
 
     public Pizza(String titre, String description, ArrayList<Ingredient> ingredients) {
         this(titre, description);
+
+        this.ingredients = new ArrayList<>();
 
         for (Ingredient ingredient : ingredients) {
             if (this.ingredients.contains(ingredient)) {
@@ -49,4 +52,18 @@ public abstract class Pizza {
         return prix;
     }
 
+    @Override
+    public Iterator<Ingredient> iterator() {
+        return ingredients.iterator();
+    }
+
+    @Override
+    public String toString() {
+        String infos = titre + "\n" + description + "\nIngrédients : ";
+        for (Ingredient ingredient : ingredients){
+            infos +="\n" + ingredient.getNom();
+        }
+        infos +="\nprix : " + calculerPrix() + " euros";
+        return infos;
+    }
 }
