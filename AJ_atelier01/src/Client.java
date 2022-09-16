@@ -1,5 +1,7 @@
+import java.util.Objects;
+
 public class Client {
-    private final int numeroSuivant = 1;
+    private static int numeroSuivant = 1;
     private int numero;
     private String nom, prenom, telephone;
 
@@ -7,6 +9,9 @@ public class Client {
         this.nom = nom;
         this.prenom = prenom;
         this.telephone = telephone;
+
+        this.numero = numeroSuivant;
+        numeroSuivant ++;
     }
 
     public int getNumero() {
@@ -20,5 +25,16 @@ public class Client {
     }
     public String getTelephone() {
         return telephone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Client client)) return false;
+        return numero == client.numero;
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(numero);
     }
 }
