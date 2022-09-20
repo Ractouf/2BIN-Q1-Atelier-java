@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Objects;
 
 public abstract class Pizza implements Iterable<Ingredient> {
     public final static double PRIX_BASE = 5.0;
@@ -55,6 +56,17 @@ public abstract class Pizza implements Iterable<Ingredient> {
     @Override
     public Iterator<Ingredient> iterator() {
         return ingredients.iterator();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Pizza that)) return false;
+        return titre.equals(that.titre);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(titre);
     }
 
     @Override

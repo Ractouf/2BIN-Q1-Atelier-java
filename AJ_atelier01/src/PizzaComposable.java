@@ -2,6 +2,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PizzaComposable extends Pizza {
     private Client createur;
@@ -18,6 +19,18 @@ public class PizzaComposable extends Pizza {
     }
     public LocalDateTime getDate() {
         return date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PizzaComposable that)) return false;
+        if (!super.equals(o)) return false;
+        return createur.equals(that.createur) && date.equals(that.date);
+    }
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), createur, date);
     }
 
     @Override
