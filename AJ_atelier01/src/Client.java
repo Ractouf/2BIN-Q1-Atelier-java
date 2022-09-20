@@ -1,10 +1,13 @@
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Objects;
 
-public class Client {
+public class Client implements Iterable<Commande> {
     private static int numeroSuivant = 1;
     private int numero;
     private String nom, prenom, telephone;
     private Commande commandeEnCours;
+    private ArrayList<Commande> commandesPassees;
 
     public Client(String nom, String prenom, String telephone) {
         this.nom = nom;
@@ -13,6 +16,7 @@ public class Client {
 
         this.numero = numeroSuivant;
         numeroSuivant ++;
+        commandesPassees = new ArrayList<>();
     }
 
     public int getNumero() {
@@ -32,7 +36,7 @@ public class Client {
     }
 
     public boolean enregistrer(Commande commande) {
-        if (commande.getClient().getNumero() != (numero) || commandeEnCours != null) {
+        if (commande.getClient().getNumero() != (numero) || commandeEnCours != null || commandesPassees.contains(commande)) {
             return false;
         }
         commandeEnCours = commande;
@@ -43,6 +47,7 @@ public class Client {
         if (commandeEnCours == null) {
             return false;
         }
+        commandesPassees.add(commandeEnCours);
         commandeEnCours = null;
         return true;
     }
@@ -62,5 +67,10 @@ public class Client {
     public String toString() {
         String toString = null;
         return "client n° " + numero + " (" + prenom + " " + nom + ", telephone : " + telephone + ")";
+    }
+
+    @Override
+    public Iterator<Commande> iterator() {
+        return commandesPassees.iterator();
     }
 }

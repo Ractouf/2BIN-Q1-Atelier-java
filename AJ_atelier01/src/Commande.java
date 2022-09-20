@@ -65,6 +65,26 @@ public class Commande implements Iterable<LigneDeCommande> {
         return total;
     }
 
+    public boolean retirer(Pizza pizza, int quantite) {
+        if (client.getCommandeEnCours() != this || !containsPizza(pizza)) {
+            return false;
+        }
+        for (LigneDeCommande ligne : lignesDeCommande) {
+            if (ligne.getPizza() == pizza) {
+                if (ligne.getQuantite() > quantite) {
+
+                }
+            }
+        }
+    }
+    private boolean containsPizza(Pizza pizza) {
+        for (LigneDeCommande ligne : lignesDeCommande) {
+            if (ligne.getPizza() == pizza) {
+                return true;
+            }
+        }
+        return false;
+    }
     public String detailler() {
         String details = "";
         for (LigneDeCommande ligne : lignesDeCommande) {
