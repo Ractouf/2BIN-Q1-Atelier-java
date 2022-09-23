@@ -4,6 +4,9 @@ public class LigneDeCommande {
     private double prixUnitaire;
 
     public LigneDeCommande(Pizza pizza, int quantite) {
+        if (pizza == null || quantite < 1)
+            throw new IllegalArgumentException();
+
         this.pizza = pizza;
         this.quantite = quantite;
 

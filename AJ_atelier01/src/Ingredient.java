@@ -5,6 +5,8 @@ public class Ingredient {
     private double prix;
 
     public Ingredient(String nom, double prix) {
+        if (nom == null || prix < 1)
+            throw new IllegalArgumentException();
         this.nom = nom;
         this.prix = prix;
     }

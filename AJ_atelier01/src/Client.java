@@ -10,6 +10,9 @@ public class Client implements Iterable<Commande> {
     private ArrayList<Commande> commandesPassees;
 
     public Client(String nom, String prenom, String telephone) {
+        if (nom == null || prenom == null || telephone == null)
+            throw new IllegalArgumentException();
+
         this.nom = nom;
         this.prenom = prenom;
         this.telephone = telephone;
@@ -36,17 +39,20 @@ public class Client implements Iterable<Commande> {
     }
 
     public boolean enregistrer(Commande commande) {
-        if (commande.getClient().getNumero() != (numero) || commandeEnCours != null || commandesPassees.contains(commande)) {
+        if (commande == null)
+            throw new IllegalArgumentException();
+
+        if (commande.getClient().getNumero() != (numero) || commandeEnCours != null || commandesPassees.contains(commande))
             return false;
-        }
+
         commandeEnCours = commande;
         return true;
     }
 
     public boolean cloturerCommandeEnCours() {
-        if (commandeEnCours == null) {
+        if (commandeEnCours == null)
             return false;
-        }
+
         commandesPassees.add(commandeEnCours);
         commandeEnCours = null;
         return true;

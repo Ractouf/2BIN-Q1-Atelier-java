@@ -13,9 +13,12 @@ public class Commande implements Iterable<LigneDeCommande> {
     private ArrayList<LigneDeCommande> lignesDeCommande;
 
     public Commande(Client client) {
-        if (client.getCommandeEnCours() != null) {
+        if (client == null)
+            throw new IllegalArgumentException();
+
+        if (client.getCommandeEnCours() != null)
             throw new IllegalArgumentException("impossible de créer une commande pour un client ayant encore une commande en cours");
-        }
+
 
         this.client = client;
         this.date = LocalDateTime.now();
@@ -38,9 +41,12 @@ public class Commande implements Iterable<LigneDeCommande> {
     }
 
     public boolean ajouter(Pizza pizza, int quantite) {
-        if (client.getCommandeEnCours() != this) {
+        if (pizza == null || quantite < 1)
+            throw new IllegalArgumentException();
+
+        if (client.getCommandeEnCours() != this)
             return false;
-        }
+
 
         for (LigneDeCommande ligne : lignesDeCommande) {
             if (ligne.getPizza() == pizza) {
@@ -59,37 +65,65 @@ public class Commande implements Iterable<LigneDeCommande> {
 
     public double calculerMontantTotal() {
         double total = 0;
-        for (LigneDeCommande ligne : lignesDeCommande) {
+        for (LigneDeCommande ligne : lignesDeCommande)
             total += ligne.calculerPrixTotal();
-        }
+
         return total;
     }
 
     public boolean retirer(Pizza pizza, int quantite) {
-        if (client.getCommandeEnCours() != this || !containsPizza(pizza)) {
+        if (pizza == null || quantite < 1)
+            throw new IllegalArgumentException();
+
+        if (client.getCommandeEnCours() != this || !containsPizza(pizza))
             return false;
-        }
+
         for (LigneDeCommande ligne : lignesDeCommande) {
             if (ligne.getPizza() == pizza) {
                 if (ligne.getQuantite() > quantite) {
-
+                    ligne.setQuantite(ligne.getQuantite() - quantite);
+                    return true;
+                }
+                if (ligne.getQuantite() == quantite) {
+                    lignesDeCommande.remove(ligne);
                 }
             }
         }
+        return false;
     }
-    private boolean containsPizza(Pizza pizza) {
+
+    public boolean retirer(Pizza pizza) {
+        return retirer(pizza, 1);
+    }
+    public boolean supprimer(Pizza pizza) {
+        if (pizza == null)
+            throw new IllegalArgumentException();
+
+        if (client.getCommandeEnCours() != this || !containsPizza(pizza))
+            return false;
+
         for (LigneDeCommande ligne : lignesDeCommande) {
             if (ligne.getPizza() == pizza) {
+                lignesDeCommande.remove(ligne);
                 return true;
             }
         }
         return false;
     }
+
+    private boolean containsPizza(Pizza pizza) {
+        for (LigneDeCommande ligne : lignesDeCommande)
+            if (ligne.getPizza() == pizza)
+                return true;
+
+        return false;
+    }
+
     public String detailler() {
         String details = "";
-        for (LigneDeCommande ligne : lignesDeCommande) {
+        for (LigneDeCommande ligne : lignesDeCommande)
             details += ligne.toString();
-        }
+
         return details;
     }
 
