@@ -1,14 +1,16 @@
 package domaine;
 
+import util.Util;
+
 import java.time.Duration;
 import java.util.*;
 
 public class Plat implements Iterable<Instruction> {
-    private String nom;
+    private final String nom;
     private int nbPersonnes;
     private Difficulte niveauDeDifficulte;
     private Cout cout;
-    private Duration dureeEnMinutes;
+    private Duration dureeEnMinutes = Duration.ofMinutes(0);
     private List<Instruction> recette;
     private Set<IngredientQuantifie> ingredients;
 
@@ -17,7 +19,6 @@ public class Plat implements Iterable<Instruction> {
         this.nbPersonnes = nbPersonnes;
         this.niveauDeDifficulte = niveauDeDifficulte;
         this.cout = cout;
-        this.dureeEnMinutes = Duration.ofMinutes(0);
 
         recette = new ArrayList<>();
         ingredients = new HashSet<>();
@@ -40,71 +41,109 @@ public class Plat implements Iterable<Instruction> {
     }
 
     public void insererInstruction(int position, Instruction instruction) {
-        if (position < 0 || position > recette.size())
+        Util.checkStrictlyPositive(position);
+        Util.checkObject(instruction);
+
+        if (position > recette.size() + 1)
             throw new IllegalArgumentException();
 
-        recette.set(position, instruction);
+        recette.add(position - 1,instruction);
+        dureeEnMinutes = dureeEnMinutes.plus(instruction.getDureeEnMinutes());
     }
     public void ajouterInstruction (Instruction instruction) {
+        Util.checkObject(instruction);
+
         recette.add(instruction);
+        dureeEnMinutes = dureeEnMinutes.plus(instruction.getDureeEnMinutes());
     }
     public Instruction remplacerInstruction (int position, Instruction instruction) {
-        return recette.set(position, instruction);
+        Util.checkStrictlyPositive(position);
+        Util.checkObject(instruction);
+
+        if (position > recette.size())
+            throw new IllegalArgumentException();
+
+        Instruction instructionRemplacee = recette.set(position - 1,instruction);
+        dureeEnMinutes = dureeEnMinutes.minus(instructionRemplacee.getDureeEnMinutes());
+        dureeEnMinutes = dureeEnMinutes.plus(instruction.getDureeEnMinutes());
+
+        return instructionRemplacee;
     }
     public Instruction supprimerInstruction (int position) {
-        return recette.remove(position);
+        Util.checkStrictlyPositive(position);
+
+        if (position > recette.size() )
+            throw new IllegalArgumentException();
+
+        Instruction instructionSupprimee = recette.remove(position - 1);
+        dureeEnMinutes = dureeEnMinutes.minus(instructionSupprimee.getDureeEnMinutes());
+
+        return instructionSupprimee;
     }
 
     @Override
     public Iterator<Instruction> iterator() {
-        return recette.iterator();
-    }
-    public Iterator<Instruction> instructions() {
-        //fournit un itérateur d’instructions ne permettant pas de supprimer des
-        //instructions (la méthode remove de l’itérateur renvoyé doit lancer une UnsupportedOperationException)
+        return Collections.unmodifiableList(recette).iterator();
     }
 
-    public boolean ajouterIngredient(Ingredient ingredient, int quantite, Unite unite) {
-        IngredientQuantifie ingredientQuantifie = trouverIngredientQuantifie(ingredient);
+    private IngredientQuantifie getIngredientQuantifie(Ingredient ingredient) {
+        Util.checkObject(ingredient);
 
-        if (ingredientQuantifie == null) {
-            return false;
+        for (IngredientQuantifie ingredientQuantifie : ingredients) {
+            if (ingredientQuantifie.getIngredient().equals(ingredient))
+                return ingredientQuantifie;
         }
 
-        return ingredients.add(new IngredientQuantifie(ingredient, quantite, unite));
+        return null;
     }
 
-    public boolean ajouterIngredient(Ingredient ingredient, int quantite) {
-        return ajouterIngredient(ingredient, quantite, null);
-    }
+    public boolean ajouterIngredient(Ingredient ingredient, int quantite, Unite unite){
+        Util.checkObject(unite);
+        Util.checkStrictlyPositive(quantite);
 
-    public boolean modifierIngredient(Ingredient ingredient, int quantite, Unite unite) {
-        IngredientQuantifie ingredientQuantifie = trouverIngredientQuantifie(ingredient);
-        if (ingredientQuantifie == null) {
+        if (getIngredientQuantifie(ingredient) != null)
             return false;
-        }
 
-        ingredientQuantifie.setQuantite(quantite);
-        ingredientQuantifie.setUnite(unite);
+        ingredients.add(new IngredientQuantifie(ingredient,quantite,unite));
+
         return true;
     }
 
-    public boolean supprimerIngredient(Ingredient ingredient) {
-        IngredientQuantifie ingredientQuantifie = trouverIngredientQuantifie(ingredient);
-        if (ingredientQuantifie == null) {
+    public boolean ajouterIngredient(Ingredient ingredient, int quantite){
+        return ajouterIngredient(ingredient,quantite,Unite.NEANT);
+    }
+
+    public boolean modifierIngredient(Ingredient ingredient, int quantite, Unite unite){
+        Util.checkObject(unite);
+        Util.checkStrictlyPositive(quantite);
+
+        IngredientQuantifie ingredientQuantifie = getIngredientQuantifie(ingredient);
+
+        if (ingredientQuantifie == null)
             return false;
-        }
+
+        ingredientQuantifie.setQuantite(quantite);
+        ingredientQuantifie.setUnite(unite);
+
+        return true;
+    }
+
+    public boolean supprimerIngredient(Ingredient ingredient){
+        IngredientQuantifie ingredientQuantifie = getIngredientQuantifie(ingredient);
+
+        if (ingredientQuantifie == null)
+            return false;
 
         return ingredients.remove(ingredientQuantifie);
     }
 
-    public IngredientQuantifie trouverIngredientQuantifie(Ingredient ingredient) {
-        for (IngredientQuantifie ingredientQuantifie : ingredients) {
-            if (ingredientQuantifie.getIngredient() == ingredient) {
-                return ingredientQuantifie;
-            }
-        }
-        return null;
+    public IngredientQuantifie trouverIngredientQuantifie(Ingredient ingredient){
+        IngredientQuantifie ingredientQuantifie = getIngredientQuantifie(ingredient);
+
+        if (ingredientQuantifie == null)
+            return null;
+
+        return ingredientQuantifie;
     }
 
     @Override
@@ -126,6 +165,7 @@ public class Plat implements Iterable<Instruction> {
         }
         return res;
     }
+
     public enum Difficulte {
         X,XX,XXX,XXXX,XXXXX;
 

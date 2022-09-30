@@ -35,7 +35,7 @@ public class Main {
 		plat.insererInstruction(3,instruction);
 		plat.supprimerInstruction(5);
 
-		Iterator<Instruction> instructionIterator = plat.instructions();
+		Iterator<Instruction> instructionIterator = plat.iterator();
 		while(instructionIterator.hasNext()){
 			instruction = instructionIterator.next();
 		}
