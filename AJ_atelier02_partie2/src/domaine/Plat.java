@@ -188,6 +188,16 @@ public class Plat implements Iterable<Instruction> {
         }
     }
     public enum Type {
-        ENTREE, PLAT, DESSERT
+        ENTREE("Entrée"), PLAT("Plat"), DESSERT("Dessert");
+
+        private String nom;
+
+        Type(String nom) {
+            this.nom = nom;
+        }
+
+        public String getNom() {
+            return nom;
+        }
     }
 }

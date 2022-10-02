@@ -60,6 +60,15 @@ public class Main {
 		IngredientQuantifie ingQuantifie = plat.trouverIngredientQuantifie(new Ingredient("Blanc de poulet"));
 		System.out.println("Quantité de blanc de poulet nécessaire : " + ingQuantifie.getQuantite() + " " + ingQuantifie.getUnite()+"\n");
 		System.out.println(plat);
+
+		Livre livre = new Livre();
+		livre.ajouterPlat(plat);
+		livre.ajouterPlat(new Plat("Croquettes au fromage", 4, Difficulte.XXX,
+				Cout.$$, Plat.Type.ENTREE));
+		System.out.println(livre);
+		livre.supprimerPlat(new Plat("Toasts aux champignons", 5, Difficulte.XXX,
+				Cout.$$$, Plat.Type.ENTREE));
+		System.out.println(livre);
 	}
 
 }
