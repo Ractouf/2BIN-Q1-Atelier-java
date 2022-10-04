@@ -10,7 +10,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		Plat plat = null;
+		Plat plat;
 		plat = new Plat("Waterzooi", 4, Difficulte.XX, Cout.$$$, Plat.Type.PLAT);
 
 		Instruction instruction = new Instruction("Couper les légumes", 15);
