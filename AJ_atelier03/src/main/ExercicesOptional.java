@@ -48,24 +48,36 @@ public class ExercicesOptional {
     public void run() {
         this.optional1();
         this.optional2();
-
     }
-
-
-
-
-
-
-
 
     private void optional1() {
         System.out.println("optional1");
 
+        var s = transactions
+                .stream()
+                .map(Transaction::getValue)
+                .reduce(Integer::max)
+                .orElse(Integer.MIN_VALUE);
+
+        System.out.println(s);
     }
 
     private void optional2() {
         System.out.println("optional2");
 
+        Transaction t = new Transaction(null, 0, Integer.MAX_VALUE);
+        var s = transactions
+                .stream()
+                .reduce((a, b) -> {
+                    if (a.getValue() < b.getValue())
+                        return a;
+                    else return b;
+                });
+
+        if (s.isEmpty())
+            System.out.println("L'optional est vide");
+
+        System.out.println(s);
     }
 
 }
