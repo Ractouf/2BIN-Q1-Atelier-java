@@ -33,7 +33,7 @@ public class ParallelStreams {
                 fastMult2(n);
                 slowMult2(n);
                 ultraSlowMult2(n);
-            });s
+            });
 
             //TODO: 1. effecuter un map avec fastMult2
             //      2. effectuer un map avec slowMult2
