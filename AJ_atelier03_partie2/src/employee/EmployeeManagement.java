@@ -1,10 +1,21 @@
 package employee;
 
+import domaine.Employe;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class EmployeeManagement {
@@ -17,7 +28,15 @@ public class EmployeeManagement {
     private static final Supplier<Stream<String>> supplier = () -> {
         //TODO: retourner un stream créer à partir du fichier. Aidez vous de la p.15 : "Créer des streams"
         //      En cas d'IOException, vous devez lancer une UncheckedIOException
-        return null;
+
+        try {
+            FileReader fr = new FileReader("AJ_atelier03_partie2/resources/streamingvf.csv");
+            return new BufferedReader(fr).lines();
+
+//          return Files.lines(Paths.get("AJ_atelier03_partie2/resources/streaming.csv"));
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     };
 
     public static void main(String[] args) {
@@ -41,8 +60,7 @@ public class EmployeeManagement {
      * @return une String contenant la première ligne du fichier
      */
     private static String firstLine() {
-        //TODO
-        return null;
+        return supplier.get().findFirst().isPresent() ? supplier.get().findFirst().get() : "None";
     }
 
 
@@ -52,10 +70,9 @@ public class EmployeeManagement {
      * @return une liste de String de plus de 8 lettres contenant 'O' ou 'K'
      */
     private static List<String> filteredLastnames() {
-        Predicate<String> predicate = s -> s.length() > 8;
-        //TODO: combiner predicate avec d'autres  (p.7 : "Predicate"), puis le passer en paramètre de
-        //      de l'appel filter() pour filtrer les résultats.
-        return null;
+        Predicate<String> predicate = s -> s.length() > 8 && (s.contains("O") || s.contains("K"));
+
+        return supplier.get().map(s -> s.split(";")[1]).filter(predicate).collect(Collectors.toList());
     }
 
     /**
@@ -69,7 +86,16 @@ public class EmployeeManagement {
         //      prénom (firstname) de l'Employee passé en paramètre.
         //      Retourner une liste contenant le nombre d'occurences du caractère 'e' dans les
         //      prénoms de tous les employés en utilisant votre BiFunction.
-        return null;
+        BiFunction<Employee, Character, Integer> biFunction = (employe, character) -> {
+            int compteur = 0;
+            for (Character c : employe.getFirstname().toCharArray()) {
+                if (c == character)
+                    compteur ++;
+            }
+            return compteur;
+        };
+
+        return supplier.get().map((line) -> biFunction.apply(new Employee(line), 'e')).collect(Collectors.toList());
     }
 
     /**
@@ -77,8 +103,7 @@ public class EmployeeManagement {
      * @return true si tous les emails se terminent par "streamingvf.be", false sinon
      */
     private static boolean allEmailCorrect() {
-        //TODO
-        return false;
+        return supplier.get().map(s -> s.split(";")[3]).allMatch(s -> s.endsWith("streamingvf.be"));
     }
 
     /**
@@ -87,8 +112,7 @@ public class EmployeeManagement {
      * @return une String contenant un prénom ou "None"
      */
     private static String longLastName() {
-        //TODO
-        return "None";
+        return supplier.get().map(s -> s.split(";")[1]).filter(s -> s.length() > 14).findAny().orElse("none");
     }
 
     /**
@@ -96,8 +120,7 @@ public class EmployeeManagement {
      * @return le nombre d'employé à mi-temps de la boîte
      */
     private static long numbreOfPartTimers() {
-        //TODO
-        return 0;
+        return supplier.get().map(Employee::new).filter(e -> !e.isFullTime()).count();
     }
 
     /**
@@ -106,8 +129,12 @@ public class EmployeeManagement {
      *         ou à plein temps (true)
      */
     private static Map<Boolean, List<Integer>> timeDistrubution() {
-        //TODO
-        return null;
+//      return supplier.get().map(s -> s.split(";")).collect(Collectors.groupingBy(s -> s[4].equals("MT"), Collectors.mapping(s -> Integer.parseInt(s[0]), Collectors.toList())));
+
+        return supplier.get()
+                .map(Employee::new)
+                .collect(Collectors.partitioningBy(e -> !e.isFullTime(),
+                         Collectors.mapping(Employee::getId, Collectors.toList())));
     }
 
     /**
@@ -118,6 +145,7 @@ public class EmployeeManagement {
     private static void withLines(Consumer<Stream<String>> consumer) {
         //TODO: try-with-resources avec le Supplier. Le consumer doit utiliser (en utilisant sa méthode accept())
         //      le résultat du Supplier.
+        consumer.accept(supplier.get());
     }
 
     /**
@@ -125,7 +153,7 @@ public class EmployeeManagement {
      */
     private static void printLongestName() {
         withLines( lines -> {
-            //TODO: print le plus long nom de famille du fichier
+            lines.map(s -> s.split(";")[1]).max(Comparator.comparingInt(String::length)).ifPresent(System.out::println);
         });
     }
 

@@ -1,14 +1,15 @@
 package parallel;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import static parallel.DelayedOperations.runAndRecordTime;
+import static parallel.DelayedOperations.*;
 
 public class ParallelStreams {
 
     //TODO: initialiser numbers grâce à un InStream pour obtenir une liste d'entier de 1 à 100
     //      Aidez-vous de la théorie p.14-15 "La génération d'un IntStream"
-    private static List<Integer> numbers = null;
+    private static List<Integer> numbers = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println("Temps d'exécution en série : " + serialMap());
@@ -28,6 +29,12 @@ public class ParallelStreams {
      */
     private static long serialMap() {
         return runAndRecordTime( () -> {
+            numbers.stream().forEach(n -> {
+                fastMult2(n);
+                slowMult2(n);
+                ultraSlowMult2(n);
+            });s
+
             //TODO: 1. effecuter un map avec fastMult2
             //      2. effectuer un map avec slowMult2
             //      3. effectuer un map avec ultraSlowMult2
