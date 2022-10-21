@@ -1,5 +1,6 @@
 package domaine;
 
+import exceptions.QuantiteNonAutoriseeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PrixTest {
     private Prix prixAucune, prixPub, prixSolde;
-
     @BeforeEach
     void setUp() {
         prixAucune = new Prix();
@@ -26,9 +26,14 @@ class PrixTest {
     }
 
     @Test
-    @DisplayName("Test contructeur")
-    void testConstructeur() {
+    @DisplayName("Test constructeur promo null")
+    void testConstructeurPromoNull() {
         assertThrows(IllegalArgumentException.class, () -> new Prix(null, 10));
+    }
+
+    @Test
+    @DisplayName("Test constructeur valeur promo négative")
+    void testConstructeurPromoNegative() {
         assertThrows(IllegalArgumentException.class, () -> new Prix(TypePromo.PUB, -2));
     }
 
@@ -96,17 +101,36 @@ class PrixTest {
     @DisplayName("Test get prix")
     @ValueSource(ints = {0, -10})
     void getPrix(int quantite) {
-        //Vérifier que la méthode lance une IllegalArgumentException si le paramètre
-        //quantité est négatif ou nul
+        // Vérifier que la méthode lance une IllegalArgumentException si le paramètre
+        // quantité est négatif ou nul
         assertThrows(IllegalArgumentException.class, () -> prixAucune.getPrix(quantite));
     }
 
     @ParameterizedTest
     @DisplayName("Test get prix")
-    @ValueSource(ints = {1, 5, 9}, {10, 15, 20, 25})
-    void getPrixTest(int quantite) {
-        //Vérifier que la méthode lance une IllegalArgumentException si le paramètre
-        //quantité est négatif ou nul
-        assertEquals(20, prixAucune.getPrix(1));
+    @ValueSource(ints = {1, 5, 9})
+    void getPrixTestPetit(int quantite) {
+        // Testez les prix renvoyés par la méthode getPrix pour l’attribut prixAucune
+        assertEquals(20, prixAucune.getPrix(quantite));
+    }
+
+    @ParameterizedTest
+    @DisplayName("Test get prix")
+    @ValueSource(ints = {10, 15, 20, 25})
+    void getPrixTestGrand(int quantite) {
+        // Testez les prix renvoyés par la méthode getPrix pour l’attribut prixAucune
+        assertEquals(10, prixAucune.getPrix(quantite));
+    }
+
+    @Test
+    @DisplayName("prix pour 2 unités pub")
+    void testQuantiteNonAutoriseePub() {
+        assertThrows(QuantiteNonAutoriseeException.class, () -> prixPub.getPrix(2));
+    }
+
+    @Test
+    @DisplayName("prix pour 2 unités solde")
+    void testQuantiteNonAutoriseeSolde() {
+        assertThrows(QuantiteNonAutoriseeException.class, () -> prixSolde.getPrix(1));
     }
 }
