@@ -4,9 +4,13 @@ import be.vinci.classes.User;
 import be.vinci.instances.InstanceGraph1;
 import be.vinci.services.ClassAnalyzer;
 import be.vinci.services.InstancesAnalyzer;
+import be.vinci.utils.InstanceGraphBuilder;
 import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 /**
  * Send instances graph data to make object diagrams
@@ -22,9 +26,26 @@ public class Instances {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public JsonStructure getInstanceGraphInfo(@QueryParam("builderclassname") String builderClassname) {
-        InstanceGraph1 builder = new InstanceGraph1();    // TODO change this line to use the query parameter, and generate dynamically the builder
-        Object instanceGraph = builder.initInstanceGraph();   // TODO change this line to avoid calling initInstanceGraph() directly
-        InstancesAnalyzer analyzer = new InstancesAnalyzer(instanceGraph);
-        return analyzer.getFullInfo();
+        Class<?> builder = null;
+
+        try {
+            builder = Class.forName("be.vinci.instances." + builderClassname);
+        } catch (ClassNotFoundException e) {
+            throw new WebApplicationException(404);
+        }
+
+        for (Method method : builder.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(InstanceGraphBuilder.class)) {
+                Object instanceGraph = null;
+                try {
+                    instanceGraph = method.invoke(builder.newInstance());
+                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                    throw new RuntimeException(e);
+                }
+                InstancesAnalyzer analyzer = new InstancesAnalyzer(instanceGraph);
+                return analyzer.getFullInfo();
+            }
+        }
+        return null;
     }
 }

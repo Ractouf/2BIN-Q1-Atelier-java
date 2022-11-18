@@ -55,7 +55,7 @@ public class ClassAnalyzer {
     public JsonArray getMethods() {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-        for (Method method : aClass.getMethods()) {
+        for (Method method : aClass.getDeclaredMethods()) {
             arrayBuilder.add(getMethod(method));
         }
 
@@ -98,7 +98,7 @@ public class ClassAnalyzer {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
         for (Parameter parameter : m.getParameters()) {
-            arrayBuilder.add(parameter.getName());
+            arrayBuilder.add(parameter.getType().getSimpleName());
         }
 
         return arrayBuilder.build();
