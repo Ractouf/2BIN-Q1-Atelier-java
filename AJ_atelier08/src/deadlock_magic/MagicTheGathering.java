@@ -5,19 +5,19 @@ public class MagicTheGathering {
 
         Grimoire codex = new Grimoire();
 
-        Thread incantation1 =new Thread(){
+        Thread incantation1 = new Thread(){
             public void run(){
                     codex.calmeInfini("Gandalf");
             }
         } ;
 
-        Thread incantation2 =new Thread(){
+        Thread incantation2 = new Thread(){
             public void run(){
                 codex.demonDeMinuit("Saroumane");
             }
         } ;
 
-        Thread incantation3 =new Thread(){
+        Thread incantation3 = new Thread(){
             public void run(){
                 codex.pluieBienfaisante("Garcimore");
             }

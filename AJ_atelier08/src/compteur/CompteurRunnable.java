@@ -1,11 +1,13 @@
 package compteur;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class CompteurRunnable implements Runnable {
 
     private String nom;
     private int max;
 
-    private static int podium = 0;
+    private static AtomicInteger podium = new AtomicInteger(1);
 
     @Override
     public void run() {
@@ -19,7 +21,7 @@ public class CompteurRunnable implements Runnable {
             }
         }
 
-        System.out.println(nom + " a fini de compter en position " + ++ podium);
+        System.out.println(nom + " a fini de compter en position " + podium.getAndIncrement());
     }
 
     public CompteurRunnable(String nom, int max) {

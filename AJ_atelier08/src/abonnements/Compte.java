@@ -17,12 +17,14 @@ public class Compte {
     }
 
     public boolean depenser(Depense depense) {
-        if (solde<depense.getMontant())
-            return false;
+        synchronized (this) {
+            if (solde < depense.getMontant())
+                return false;
 
-        solde = getSolde() - depense.getMontant();
-        historique.add(depense);
-        return true;
+            solde = getSolde() - depense.getMontant();
+            historique.add(depense);
+            return true;
+        }
     }
 
     public double getSolde() {

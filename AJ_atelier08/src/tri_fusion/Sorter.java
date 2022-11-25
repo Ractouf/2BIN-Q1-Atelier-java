@@ -22,8 +22,7 @@ public class Sorter {
 
 	/**
 	 * Sort a table of int in ascending order
-	 * 
-	 * @param table the table to sort
+	 * table the table to sort
 	 */
 	public void sort() {
 		this.sort(this.start, this.end);
@@ -42,8 +41,19 @@ public class Sorter {
 			}
 		} else {
 			int milieu = start + (end - start) / 2;
-			sort(start, milieu);
-			sort(milieu + 1, end);
+			ThreadPrincipal t1 = new ThreadPrincipal(start, milieu);
+			ThreadPrincipal t2 = new ThreadPrincipal(milieu + 1, end);
+			t1.start();
+			t2.start();
+
+			try {
+				t1.join();
+				t2.join();
+			} catch (InterruptedException e) {
+				throw new RuntimeException(e);
+			}
+//			sort(start, milieu);
+//			sort(milieu + 1, end);
 			this.mergeSort(start, end);
 		}
 	}
@@ -98,4 +108,16 @@ public class Sorter {
 		}
 	}
 
+	private class ThreadPrincipal extends Thread {
+		int start, end, nbThread;
+		public ThreadPrincipal(int start, int end) {
+			this.start = start;
+			this.end = end;
+			nbThread ++;
+		}
+		@Override
+		public void run () {
+			sort(start, end);
+		}
+	}
 }

@@ -12,9 +12,10 @@ public class Main {
 		Sorter sorter = new Sorter(table);
 		sorter.sort();
 		System.out.println("\n" + ChronoUnit.MILLIS.between(start, LocalDateTime.now()));
-		/*for (int i = 0; i < table.length; i++) {
+
+		for (int i = 0; i < table.length; i++) {
 			System.out.print(table[i] + " ; ");
-		}*/
+		}
 	}
 	
 }
