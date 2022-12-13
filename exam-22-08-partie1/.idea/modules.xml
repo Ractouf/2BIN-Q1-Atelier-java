@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/1-enumere/1-enumere.iml" filepath="$PROJECT_DIR$/1-enumere/1-enumere.iml" />
+      <module fileurl="file://$PROJECT_DIR$/2-collections/2-collections.iml" filepath="$PROJECT_DIR$/2-collections/2-collections.iml" />
+      <module fileurl="file://$PROJECT_DIR$/3-streams/3-streams.iml" filepath="$PROJECT_DIR$/3-streams/3-streams.iml" />
+      <module fileurl="file://$PROJECT_DIR$/4-tests/4-tests.iml" filepath="$PROJECT_DIR$/4-tests/4-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exam-22-08-partie1.iml" filepath="$PROJECT_DIR$/exam-22-08-partie1.iml" />
+    </modules>
+  </component>
+</project>
