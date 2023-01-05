@@ -21,30 +21,32 @@ public class CompteurThread extends Thread {
     @Override
     public void run() {
         for (int i = 1; i <= max; i++) {
-            System.out.println(nom + " : " + i);
-
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
+
+            System.out.println(nom + " : " + i);
         }
 
-        System.out.println(nom + " a terminé de compter");
+        System.out.println(nom + " a fini de compter");
 
         synchronized (this.getClass()) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+
             if (gagnant == null) {
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                gagnant = new CompteurThread(nom, max);
-
                 System.out.println(nom + " a gagné");
+                gagnant = this;
             }
         }
+
+
+
     }
 
     public static CompteurThread getGagnant() {

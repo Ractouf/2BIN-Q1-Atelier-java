@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -74,22 +73,24 @@ public class ClassAnalyzer {
      */
     public JsonObject getField(Field f) {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
+
         objectBuilder.add("name", f.getName());
         objectBuilder.add("type", f.getType().getSimpleName());
         objectBuilder.add("visibility", getFieldVisibility(f));
         objectBuilder.add("isStatic", isFieldStatic(f));
+
         return objectBuilder.build();
     }
 
-    public JsonObject getMethod(Method m) {
+    public JsonObject getMethod(Method method) {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
 
-        objectBuilder.add("name", m.getName());
-        objectBuilder.add("return type", m.getReturnType().getSimpleName());
-        objectBuilder.add("parameters", getParameters(m));
-        objectBuilder.add("visibility", getMethodVisibility(m));
-        objectBuilder.add("is static", isMethodStatic(m));
-        objectBuilder.add("is abstract", isMethodAbstract(m));
+        objectBuilder.add("name", method.getName());
+        objectBuilder.add("returnType", method.getReturnType().getSimpleName());
+        objectBuilder.add("parameters", getParameters(method));
+        objectBuilder.add("visibility", getMethodVisibility(method));
+        objectBuilder.add("isStatic", Modifier.isStatic(method.getModifiers()));
+        objectBuilder.add("isAbstract", Modifier.isAbstract(method.getModifiers()));
 
         return objectBuilder.build();
     }
@@ -97,12 +98,13 @@ public class ClassAnalyzer {
     private JsonArray getParameters(Method m) {
         JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 
-        for (Parameter parameter : m.getParameters()) {
-            arrayBuilder.add(parameter.getType().getSimpleName());
+        for (Parameter p : m.getParameters()) {
+            arrayBuilder.add(p.getType().getSimpleName());
         }
 
         return arrayBuilder.build();
     }
+
     /**
      * Return whether a field is static or not
      *
@@ -113,13 +115,6 @@ public class ClassAnalyzer {
         return Modifier.isStatic(f.getModifiers());
     }
 
-    private boolean isMethodStatic(Method m) {
-        return Modifier.isStatic(m.getModifiers());
-    }
-
-    private boolean isMethodAbstract(Method m) {
-        return Modifier.isAbstract(m.getModifiers());
-    }
     /**
      * Get field visibility in a string form
      *
@@ -128,22 +123,21 @@ public class ClassAnalyzer {
      */
     private String getFieldVisibility(Field f) {
         if (Modifier.isPublic(f.getModifiers()))
-            return "public";
+            return "Public";
         if (Modifier.isPrivate(f.getModifiers()))
-            return "private";
+            return "Private";
         if (Modifier.isProtected(f.getModifiers()))
-            return "protected";
-        return "package";
+            return "Protected";
+        return "Package";
     }
 
     private String getMethodVisibility(Method m) {
         if (Modifier.isPublic(m.getModifiers()))
-            return "public";
+            return "Public";
         if (Modifier.isPrivate(m.getModifiers()))
-            return "private";
+            return "Private";
         if (Modifier.isProtected(m.getModifiers()))
-            return "protected";
-        return "package";
+            return "Protected";
+        return "Package";
     }
-
 }

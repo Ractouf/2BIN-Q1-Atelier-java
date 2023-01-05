@@ -26,26 +26,28 @@ public class Instances {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public JsonStructure getInstanceGraphInfo(@QueryParam("builderclassname") String builderClassname) {
-        Class<?> builder = null;
+        InstancesAnalyzer analyzer;
+        Class<?> foundClass;
 
         try {
-            builder = Class.forName("be.vinci.instances." + builderClassname);
+            foundClass = Class.forName("be.vinci.instances." + builderClassname);
+
         } catch (ClassNotFoundException e) {
             throw new WebApplicationException(404);
         }
 
-        for (Method method : builder.getDeclaredMethods()) {
-            if (method.isAnnotationPresent(InstanceGraphBuilder.class)) {
-                Object instanceGraph = null;
-                try {
-                    instanceGraph = method.invoke(builder.newInstance());
-                } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                    throw new RuntimeException(e);
+        try {
+            for (Method m : foundClass.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(InstanceGraphBuilder.class)) {
+                    analyzer = new InstancesAnalyzer(m.invoke(foundClass.newInstance()));
+                    return analyzer.getFullInfo();
                 }
-                InstancesAnalyzer analyzer = new InstancesAnalyzer(instanceGraph);
-                return analyzer.getFullInfo();
             }
+
+        } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            throw new RuntimeException(e);
         }
+
         return null;
     }
 }

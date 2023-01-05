@@ -8,6 +8,7 @@ import be.vinci.utils.InstanceGraphBuilder;
 import java.time.LocalDateTime;
 
 public class InstanceGraph1 {
+
     @InstanceGraphBuilder
     public Object initInstanceGraph() {
         User u = new User(1, "Laurent", "Leleux");

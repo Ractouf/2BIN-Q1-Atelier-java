@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/exam-22-08-partie1/1-enumere/1-enumere.iml" filepath="$PROJECT_DIR$/exam-22-08-partie1/1-enumere/1-enumere.iml" />
-      <module fileurl="file://$PROJECT_DIR$/exam-22-08-partie1/2-collections/2-collections.iml" filepath="$PROJECT_DIR$/exam-22-08-partie1/2-collections/2-collections.iml" />
-      <module fileurl="file://$PROJECT_DIR$/exam-22-08-partie1/3-streams/3-streams.iml" filepath="$PROJECT_DIR$/exam-22-08-partie1/3-streams/3-streams.iml" />
-      <module fileurl="file://$PROJECT_DIR$/exam-22-08-partie1/4-tests/4-tests.iml" filepath="$PROJECT_DIR$/exam-22-08-partie1/4-tests/4-tests.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exams/22-08/exam-22-08-partie1/1-enumere/1-enumere.iml" filepath="$PROJECT_DIR$/exams/22-08/exam-22-08-partie1/1-enumere/1-enumere.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exams/22-08/exam-22-08-partie1/2-collections/2-collections.iml" filepath="$PROJECT_DIR$/exams/22-08/exam-22-08-partie1/2-collections/2-collections.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exams/22-08/exam-22-08-partie1/3-streams/3-streams.iml" filepath="$PROJECT_DIR$/exams/22-08/exam-22-08-partie1/3-streams/3-streams.iml" />
       <module fileurl="file://$PROJECT_DIR$/AJ_atelier01/AJ_atelier01.iml" filepath="$PROJECT_DIR$/AJ_atelier01/AJ_atelier01.iml" />
       <module fileurl="file://$PROJECT_DIR$/AJ_atelier02/AJ_atelier02.iml" filepath="$PROJECT_DIR$/AJ_atelier02/AJ_atelier02.iml" />
       <module fileurl="file://$PROJECT_DIR$/AJ_atelier02_partie2/AJ_atelier02_partie2.iml" filepath="$PROJECT_DIR$/AJ_atelier02_partie2/AJ_atelier02_partie2.iml" />
@@ -14,7 +13,9 @@
       <module fileurl="file://$PROJECT_DIR$/AJ_atelier05/AJ_atelier05.iml" filepath="$PROJECT_DIR$/AJ_atelier05/AJ_atelier05.iml" />
       <module fileurl="file://$PROJECT_DIR$/AJ_atelier08/AJ_atelier08.iml" filepath="$PROJECT_DIR$/AJ_atelier08/AJ_atelier08.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/Atelier_java.iml" filepath="$PROJECT_DIR$/.idea/Atelier_java.iml" />
-      <module fileurl="file://$PROJECT_DIR$/exam-22-08-partie2/exam-22-08-partie2.iml" filepath="$PROJECT_DIR$/exam-22-08-partie2/exam-22-08-partie2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exams/22-08/exam-22-08-partie2/exam-22-08-partie2.iml" filepath="$PROJECT_DIR$/exams/22-08/exam-22-08-partie2/exam-22-08-partie2.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exams/22-01/exam-22-01-question1/src/main/main.iml" filepath="$PROJECT_DIR$/exams/22-01/exam-22-01-question1/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/exams/22-01/exam-22-01-question1/src/test/test.iml" filepath="$PROJECT_DIR$/exams/22-01/exam-22-01-question1/src/test/test.iml" />
     </modules>
   </component>
 </project>

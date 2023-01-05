@@ -1,14 +1,11 @@
 package main;
 
-
 import domaine.Trader;
 import domaine.Transaction;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.counting;
 import static java.util.stream.Collectors.groupingBy;
@@ -59,37 +56,35 @@ public class ExerciceGroupingBy {
 
     private void groupBy1() {
         System.out.println("GroupBy1");
-
-        Map<Trader, List<Transaction>> transactionsTrader =
-                transactions.stream()
-                            .collect(groupingBy(Transaction::getTrader));
-        System.out.println(transactionsTrader);
+        if (transactions.stream().findAny().isPresent()) {
+            var s = transactions.stream().collect(groupingBy(Transaction::getTrader));
+            System.out.println(s);
+        } else System.out.println("No transactions found");
     }
 
     private void groupBy2() {
         System.out.println("GroupBy2");
-
-        Map<Trader, Long> nombreTransactionsTrader =
-                transactions.stream()
-                            .collect(groupingBy(Transaction::getTrader, counting()));
-        System.out.println(nombreTransactionsTrader);
+        if (transactions.stream().findAny().isPresent()) {
+            var s = transactions.stream().collect(groupingBy(Transaction::getTrader, counting()));
+            System.out.println(s);
+        } else System.out.println("No transactions found");
     }
 
 
     private void groupBy3() {
         System.out.println("GroupBy3");
-
-        Map<TransactionsLevel, List<Transaction>> transactionsReparties =
-                transactions.stream()
-                            .collect(groupingBy(transaction -> {
-                                if (transaction.getValue() >= 1000)
-                                    return TransactionsLevel.VERY_HI;
-                                if (800 <= transaction.getValue() && transaction.getValue() < 1000)
-                                    return TransactionsLevel.HI;
-                                if (600 <= transaction.getValue() && transaction.getValue() < 800)
-                                    return TransactionsLevel.ME;
-                                return TransactionsLevel.LO;
-                            }));
-        System.out.println(transactionsReparties);
+        if (transactions.stream().findAny().isPresent()) {
+            var s = transactions.stream().collect(groupingBy(e -> {
+                if (e.getValue() >= 1000)
+                    return TransactionsLevel.VERY_HI;
+                if (e.getValue() >= 800 && e.getValue() < 1000)
+                    return TransactionsLevel.HI;
+                if (e.getValue() >= 600 && e.getValue() < 800)
+                    return TransactionsLevel.ME;
+                return TransactionsLevel.LO;
+            }));
+            System.out.println(s);
+        } else System.out.println("No transactions found");
     }
+
 }

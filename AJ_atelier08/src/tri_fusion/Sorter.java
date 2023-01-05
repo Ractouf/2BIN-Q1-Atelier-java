@@ -3,29 +3,40 @@ package tri_fusion;
 /**
  * Sort a table of int. Mono-thread version.
  */
-public class Sorter {
+public class Sorter extends Thread {
 
-	// Table to sort
+	public static final int DEFAULT_NB_THREADS = 2;
 	private int[] table;
-	// Slice of the table to sort
 	private int start, end;
+	private int nbThreads;
 	
 	public Sorter(int[] table) {
-		this(table, 0, table.length - 1);
+		this(table, 0, table.length - 1, DEFAULT_NB_THREADS);
 	}
-
+	public Sorter(int[] t, int nbThreads) {
+		this(t, 0, t.length - 1, nbThreads);
+	}
 	public Sorter(int[] t, int start, int end) {
+		this(t, start, end, DEFAULT_NB_THREADS);
+	}
+	public Sorter(int[] t, int start, int end, int nbThreads) {
 		this.table = t;
 		this.start = start;
 		this.end = end;
+		this.nbThreads = nbThreads;
 	}
 
 	/**
 	 * Sort a table of int in ascending order
-	 * table the table to sort
+	 * 
+	 * @param table the table to sort
 	 */
 	public void sort() {
 		this.sort(this.start, this.end);
+	}
+
+	public void run() {
+		this.sort();
 	}
 
 	/**
@@ -40,21 +51,27 @@ public class Sorter {
 				swap(start, end);
 			}
 		} else {
-			int milieu = start + (end - start) / 2;
-			ThreadPrincipal t1 = new ThreadPrincipal(start, milieu);
-			ThreadPrincipal t2 = new ThreadPrincipal(milieu + 1, end);
-			t1.start();
-			t2.start();
+			int middle = start + (end - start) / 2;
 
-			try {
-				t1.join();
-				t2.join();
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
+			if (this.nbThreads > 1) {
+				Sorter sorter1 = new Sorter(table, start, middle, this.nbThreads / 2);
+				sorter1.start();
+				Sorter sorter2 = new Sorter(this.table, middle + 1, end, this.nbThreads / 2);
+				sorter2.start();
+
+				try {
+					sorter1.join();
+					sorter2.join();
+				} catch (InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+
+				this.mergeSort(this.start, this.end);
+			} else {
+				sort(start, middle);
+				sort(middle + 1, end);
+				this.mergeSort(start, end);
 			}
-//			sort(start, milieu);
-//			sort(milieu + 1, end);
-			this.mergeSort(start, end);
 		}
 	}
 
@@ -108,16 +125,4 @@ public class Sorter {
 		}
 	}
 
-	private class ThreadPrincipal extends Thread {
-		int start, end, nbThread;
-		public ThreadPrincipal(int start, int end) {
-			this.start = start;
-			this.end = end;
-			nbThread ++;
-		}
-		@Override
-		public void run () {
-			sort(start, end);
-		}
-	}
 }

@@ -28,10 +28,8 @@ public class InstancesAnalyzer {
      */
     public JsonObject getFullInfo() {
         JsonObjectBuilder objectBuilder = Json.createObjectBuilder();
-
         objectBuilder.add("classname", anInstance.getClass().getSimpleName());
         objectBuilder.add("fields", getFields());
-
         return objectBuilder.build();
     }
 
@@ -51,17 +49,16 @@ public class InstancesAnalyzer {
 
         objectBuilder.add("name", f.getName());
         objectBuilder.add("type", f.getType().getSimpleName());
-        if (f.getType().getSimpleName().equals("String")) {
+        if (f.getType().isPrimitive() || f.getType() == String.class) {
             try {
                 f.setAccessible(true);
-                objectBuilder.add("value", (String) f.get(anInstance));
+                objectBuilder.add("value", String.valueOf(f.get(anInstance)));
                 f.setAccessible(false);
             } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
         objectBuilder.add("isStatic", Modifier.isStatic(f.getModifiers()));
-
         return objectBuilder.build();
     }
 

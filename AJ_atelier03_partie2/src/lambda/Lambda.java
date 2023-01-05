@@ -17,11 +17,10 @@ public class Lambda {
      */
     public static <T> List<T> allMatches(List<T> list, Predicate<T> match) {
         List<T> temp = new ArrayList<>();
-
-        for (T t : list)
-            if (match.test(t))
-                temp.add(t);
-
+        for (T i : list) {
+            if (match.test(i))
+                temp.add(i);
+        }
         return temp;
     }
 
@@ -32,21 +31,34 @@ public class Lambda {
      * @param transform la fonction à appliquer aux éléments
      * @return une liste contenant les integer transformés par transform
      */
-    public static <T, R> List<R> transformAll(List<T> list, Function<T, R> transform) {
+    public static <R, T> List<R> transformAll(List<T> list, Function<T, R> transform) {
         List<R> temp = new ArrayList<>();
 
-        for (T t : list) {
-            temp.add(transform.apply(t));
-        }
+        for (T i : list)
+            temp.add(transform.apply(i));
 
         return temp;
     }
 
+    /**
+     * Retourne une liste contenant uniquement les Integer qui correspondent
+     * au predicat match avec Stream
+     * @param list La liste d'Integer originale
+     * @param match le predicat à respecter
+     * @return une liste contenant les integer qui respectent match
+     */
     public static <T> List<T> filter(List<T> list, Predicate<T> match) {
         return list.stream().filter(match).collect(Collectors.toList());
     }
 
-    public static <T, R> List<R> map(List<T> list, Function<T,R> transform) {
+    /**
+     * Retourne une liste contenant tous les éléments de la liste originale, transformés
+     * par la fonction transform avec Stream
+     * @param list La liste d'Integer originale
+     * @param transform la fonction à appliquer aux éléments
+     * @return une liste contenant les integer transformés par transform
+     */
+    public static <R, T> List<R> map(List<T> list, Function<T, R> transform) {
         return list.stream().map(transform).collect(Collectors.toList());
     }
 }

@@ -1,13 +1,6 @@
 package employee;
 
-import domaine.Employe;
-
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +11,8 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static java.util.stream.Collectors.*;
+
 public class EmployeeManagement {
 
     /**
@@ -26,21 +21,16 @@ public class EmployeeManagement {
      * Complétez la fonction pour créer le Stream à partir du fichier streamingvf.cvs
      */
     private static final Supplier<Stream<String>> supplier = () -> {
-        //TODO: retourner un stream créer à partir du fichier. Aidez vous de la p.15 : "Créer des streams"
-        //      En cas d'IOException, vous devez lancer une UncheckedIOException
-
         try {
-            FileReader fr = new FileReader("AJ_atelier03_partie2/resources/streamingvf.csv");
-            return new BufferedReader(fr).lines();
-
-//          return Files.lines(Paths.get("AJ_atelier03_partie2/resources/streaming.csv"));
+            return new BufferedReader(new FileReader("AJ3-2/resources/streamingvf.csv")).lines();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
     };
 
-    public static void main(String[] args) {
 
+
+    public static void main(String[] args) {
         System.out.println("1. Première ligne du fichier : [" + firstLine() + "]");
         System.out.println("\n3. Noms de famille de plus de 8 lettres contenant 'K' ou 'O' :\n" + filteredLastnames());
         System.out.println("\n4. Liste des comptes occurences de 'e' :\n" + occurencesOfE());
@@ -51,7 +41,6 @@ public class EmployeeManagement {
         timeDistrubution().forEach((k, v) -> System.out.println(k + " : " + v));
         System.out.print("\n9. Plus long nom du fichier : ");
         printLongestName();
-
     }
 
     /**
@@ -60,9 +49,8 @@ public class EmployeeManagement {
      * @return une String contenant la première ligne du fichier
      */
     private static String firstLine() {
-        return supplier.get().findFirst().isPresent() ? supplier.get().findFirst().get() : "None";
+        return supplier.get().findFirst().orElse("None");
     }
-
 
     /**
      * Filtre le stream pour retourner une liste des noms de famille (lastname) de plus de 8 lettres
@@ -70,9 +58,11 @@ public class EmployeeManagement {
      * @return une liste de String de plus de 8 lettres contenant 'O' ou 'K'
      */
     private static List<String> filteredLastnames() {
-        Predicate<String> predicate = s -> s.length() > 8 && (s.contains("O") || s.contains("K"));
-
-        return supplier.get().map(s -> s.split(";")[1]).filter(predicate).collect(Collectors.toList());
+        return supplier
+                .get()
+                .map(s -> s.split(";")[1])
+                .filter(s -> s.length() > 8 && s.contains("O") && s.contains("K"))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -86,15 +76,16 @@ public class EmployeeManagement {
         //      prénom (firstname) de l'Employee passé en paramètre.
         //      Retourner une liste contenant le nombre d'occurences du caractère 'e' dans les
         //      prénoms de tous les employés en utilisant votre BiFunction.
-        BiFunction<Employee, Character, Integer> biFunction = (employe, character) -> {
-            int compteur = 0;
-            for (Character c : employe.getFirstname().toCharArray()) {
-                if (c == character)
-                    compteur ++;
-            }
-            return compteur;
-        };
 
+        BiFunction<Employee, Character, Integer> biFunction = (e, c) -> {
+            int result = 0;
+            for (char ch : e.getFirstname().toCharArray()) {
+                if (ch == c) {
+                    result ++;
+                }
+            }
+            return result;
+        };
         return supplier.get().map((line) -> biFunction.apply(new Employee(line), 'e')).collect(Collectors.toList());
     }
 
@@ -103,7 +94,7 @@ public class EmployeeManagement {
      * @return true si tous les emails se terminent par "streamingvf.be", false sinon
      */
     private static boolean allEmailCorrect() {
-        return supplier.get().map(s -> s.split(";")[3]).allMatch(s -> s.endsWith("streamingvf.be"));
+        return supplier.get().map(s -> s.split(";")[4]).allMatch(e -> e.endsWith("streamingvf.be"));
     }
 
     /**
@@ -112,7 +103,7 @@ public class EmployeeManagement {
      * @return une String contenant un prénom ou "None"
      */
     private static String longLastName() {
-        return supplier.get().map(s -> s.split(";")[1]).filter(s -> s.length() > 14).findAny().orElse("none");
+        return supplier.get().filter(e -> e.split(";")[1].length() > 14).map(e -> e.split(";")[2]).findFirst().orElse("None");
     }
 
     /**
@@ -120,7 +111,7 @@ public class EmployeeManagement {
      * @return le nombre d'employé à mi-temps de la boîte
      */
     private static long numbreOfPartTimers() {
-        return supplier.get().map(Employee::new).filter(e -> !e.isFullTime()).count();
+        return supplier.get().map(e -> e.split(";")[4]).filter(e -> e.contains("MT")).count();
     }
 
     /**
@@ -129,12 +120,7 @@ public class EmployeeManagement {
      *         ou à plein temps (true)
      */
     private static Map<Boolean, List<Integer>> timeDistrubution() {
-//      return supplier.get().map(s -> s.split(";")).collect(Collectors.groupingBy(s -> s[4].equals("MT"), Collectors.mapping(s -> Integer.parseInt(s[0]), Collectors.toList())));
-
-        return supplier.get()
-                .map(Employee::new)
-                .collect(Collectors.partitioningBy(e -> !e.isFullTime(),
-                         Collectors.mapping(Employee::getId, Collectors.toList())));
+        return supplier.get().map(Employee::new).collect(partitioningBy(Employee::isFullTime, mapping(Employee::getId, toList())));
     }
 
     /**
@@ -143,18 +129,17 @@ public class EmployeeManagement {
      * @param consumer un consommateur de Stream de String.
      */
     private static void withLines(Consumer<Stream<String>> consumer) {
-        //TODO: try-with-resources avec le Supplier. Le consumer doit utiliser (en utilisant sa méthode accept())
-        //      le résultat du Supplier.
-        consumer.accept(supplier.get());
+        try (Stream<String> stream = supplier.get()) {
+            consumer.accept(stream);
+        }
     }
+
 
     /**
      * Fournit un Consumer à withLines. Le Consumer doit print le plus long nom de famille du fichier
      */
     private static void printLongestName() {
-        withLines( lines -> {
-            lines.map(s -> s.split(";")[1]).max(Comparator.comparingInt(String::length)).ifPresent(System.out::println);
-        });
+        withLines(lines -> lines.map(e -> e.split(";")[1]).max(Comparator.comparingInt(String::length)).ifPresent(System.out::println));
     }
 
 
