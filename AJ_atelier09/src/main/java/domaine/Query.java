@@ -11,7 +11,7 @@ public interface Query {
     void setMethod(QueryMethod method);
 
     enum QueryMethod {
-        GET, POST;
+        GET, POST
     }
 
 }

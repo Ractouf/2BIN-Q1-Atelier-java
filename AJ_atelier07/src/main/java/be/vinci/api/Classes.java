@@ -1,7 +1,6 @@
 package be.vinci.api;
 
 import be.vinci.services.ClassAnalyzer;
-import be.vinci.classes.User;
 import jakarta.json.JsonStructure;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
